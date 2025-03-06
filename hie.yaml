@@ -1,0 +1,19 @@
+cradle:
+  cabal:
+    - path: "app/Main.hs"
+      component: "conv-gen:exe:conv-gen"
+
+    - path: "app/RustServer.hs"
+      component: "conv-gen:exe:conv-gen"
+
+    - path: "app/RustClient.hs"
+      component: "conv-gen:exe:conv-gen"
+
+    - path: "app/Basic.hs"
+      component: "conv-gen:exe:conv-gen"
+
+    - path: "app/ProofKernelInterface.hs"
+      component: "conv-gen:exe:conv-gen"
+
+    - path: "app/ProofKernelCHeader.hs"
+      component: "conv-gen:exe:conv-gen"
