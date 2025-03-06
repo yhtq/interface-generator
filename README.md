@@ -1,1 +1,1 @@
-#### An interface code generator for x-star
+# An interface code generator for x-star
