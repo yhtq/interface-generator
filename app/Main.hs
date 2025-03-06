@@ -1,4 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE QuasiQuotes #-}
 
 module Main where
 import Prelude hiding (readFile, writeFile, lines, unlines)
@@ -14,6 +15,9 @@ import Data.Text.IO (readFile, writeFile)
 import Text.Regex
 import Prettyprinter.Render.Text (renderStrict)
 import Prettyprinter (indent, layoutPretty, defaultLayoutOptions)
+import Text.RawString.QQ
+import Prettyprinter (pretty)
+
 
 xStarPath :: FilePath
 xStarPath :: FilePath = "/home/yhtq/学习/x-star"
@@ -54,10 +58,47 @@ main = do
     let int_ring = ConversionRule {
         name = "int_ring",
         nameOCaml = Just "INT_RING",
-        doc = ["a test function", "see hol-light tutorial for more details"],
+        doc = ["Ring decision procedure instantiated to integers. "],
+        docShort = Nothing,
         args = [TermArg],
         returnType = [TheoremReturn]
     }
+    let num_exp_conv = ConversionRule {
+        name = "num_exp_conv",
+        nameOCaml = Just "NUM_EXP_CONV",
+        docShort = Just ["Proves what the exponential of two natural number numerals is."],
+        doc = map pretty $ lines [r|
+SYNOPSIS
+    Proves what the exponential of two natural number numerals is.
+
+DESCRIPTION
+    If n and m are numerals (e.g. 0, 1, 2, 3,...), then NUM_EXP_CONV `n EXP m` returns the theorem:
+
+    |- n EXP m = s
+
+    where s is the numeral that denotes the natural number denoted by n raised to the power of the one denoted by m.
+
+FAILURE CONDITIONS
+    NUM_EXP_CONV tm fails if tm is not of the form `n EXP m`, where n and m are numerals.
+
+EXAMPLE
+
+    # NUM_EXP_CONV `2 EXP 64`;;
+    val it : thm = |- 2 EXP 64 = 18446744073709551616
+
+    # NUM_EXP_CONV `1 EXP 99`;;
+    val it : thm = |- 1 EXP 99 = 1
+
+    # NUM_EXP_CONV `0 EXP 0`;;
+    val it : thm = |- 0 EXP 0 = 1
+
+    # NUM_EXP_CONV `0 EXP 10000`;;
+    val it : thm = |- 0 EXP 10000 = 0
+        |] ,
+        args = [TermArg],
+        returnType = [TheoremReturn]
+    }
+    let 
     let printRule rule = do
             printerIO rpcClientPath $ functionRustClient rule
             printerIO rpcServerPath $ functionRustServer rule
@@ -65,6 +106,7 @@ main = do
             printerIO proofKernelCHeaderPath $ proofKernelCHeader rule
             printerIO rpcInterfacePath $ declarationRustInterface rule 
     printRule int_ring
+    printRule num_exp_conv
     -- print $ countingLeadingSpace "    // The followings are auto generated"
 
     -- showRule rule1

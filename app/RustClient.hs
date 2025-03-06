@@ -81,7 +81,7 @@ returnExp cr =
 functionRustClient :: ConversionRule -> D
 functionRustClient cr = 
     let decl = ("pub fn " :: D) <> pretty (name cr) <> parens (arsList cr) <+> "->" <+> returnTypeR cr in
-    vsep $ map ("///" <+>) (doc cr) ++ [
+    vsep $ rustDocShort cr ++ [
         bracesIndent decl $ vsep [
             executeLet cr,
             returnExp cr

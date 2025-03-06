@@ -10,7 +10,11 @@ module Basic (
   returnTypesToNames,
   concatComma,
   functionCall,
-  letExp
+  letExp,
+  rustDoc,
+  rustDocShort,
+  cDoc,
+  cDocShort
 ) where
 import Data.Text (Text)
 import Prettyprinter (Doc, Pretty (pretty), concatWith, comma, (<+>), parens, semi)
@@ -36,6 +40,7 @@ data ConversionRule = ConversionRule {
   name :: Text,
   nameOCaml :: Maybe Text,
   doc :: [D], -- each element is a line of documentation
+  docShort :: Maybe [D], -- short documentation
   args :: [ArgsType],
   returnType :: [ReturnType]
 }
@@ -72,3 +77,19 @@ functionCall name args = name <> parens (concatComma args)
 
 letExp :: D -> D -> D
 letExp name value = "let" <+> name <+> "=" <+> value <> semi
+
+rustDoc :: ConversionRule -> [D]
+rustDoc cr = map ("///" <+>) (doc cr)
+
+rustDocShort :: ConversionRule -> [D]
+rustDocShort cr = case docShort cr of
+    Just ds -> map ("///" <+>) ds
+    Nothing -> rustDoc cr
+
+cDoc :: ConversionRule -> [D]
+cDoc cr = "/**" : map (" * " <>) (doc cr) ++ [" */"]
+
+cDocShort :: ConversionRule -> [D]
+cDocShort cr = case docShort cr of
+    Just ds -> "/**" : map (" * " <>) ds ++ [" */"]
+    Nothing -> cDoc cr

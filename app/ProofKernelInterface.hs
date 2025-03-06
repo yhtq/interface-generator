@@ -69,7 +69,7 @@ functionCInterface cr =
             _ -> undefined in   -- don' t know how to handle multi return types yet 
     let decl = "pub unsafe extern \"C\" fn" <+> pretty (name cr) <> parens (concatComma argList) <+> "->" <+> returns in
     vsep $
-        map ("///" <+>) (doc cr) ++
+        rustDoc cr ++
         [
             "#[no_mangle]",
             bracesIndent decl $ vsep $ [

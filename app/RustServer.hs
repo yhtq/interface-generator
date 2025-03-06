@@ -196,7 +196,7 @@ functionRustServer cr =
             Just d -> [d]
             Nothing -> []
     in
-    vsep $ map ("///" <+>) (doc cr) ++ [
+    vsep $ rustDocShort cr ++ [
         
         bracesIndent signature (vsep $ [
                     load_dyn_function,
@@ -217,4 +217,4 @@ declarationRustInterface cr =
                 )
                 (argsToNameTypeKey $ args cr)) in
     let decl = ("async fn" :: D) <+> pretty (name cr) <> parens argList <+> "->" <+> returnTypeR cr <> ";" in
-    vsep $ map ("///" <+>) (doc cr) ++ [decl]
+    vsep $ rustDocShort cr ++ [decl]

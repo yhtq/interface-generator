@@ -21,15 +21,15 @@ argTypeToC TermArg = "const struct Gc_Term *"
 argTypeToC ConversionArg = "const struct Gc_Conversion *"
 argTypeToC StringArg = "const char *"
 
-docToCDoc :: [D] -> D
-docToCDoc [] = mempty
-docToCDoc ds = vsep $ "/**" : map (" * " <>) ds ++ [" */"]
+-- docToCDoc :: [D] -> D
+-- docToCDoc [] = mempty
+-- docToCDoc ds = vsep $ "/**" : map (" * " <>) ds ++ [" */"]
 
 proofKernelCHeader :: ConversionRule -> D
 proofKernelCHeader cr =
     let argList = concatComma $ zipWith (flip (<>)) (argsToNamesWithIndex $ args cr) (map argTypeToC $ args cr) in
-    vsep [
-        docToCDoc (doc cr),
+    vsep $ cDoc cr ++ [
+        
         returnTypesC cr <> pretty (name cr) <> parens argList <> semi
     ]
 

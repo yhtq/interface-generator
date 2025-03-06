@@ -75,7 +75,8 @@ executable conv-gen
         text,
         containers,
         filepath,
-        regex-compat
+        regex-compat,
+        raw-strings-qq
     other-modules:
         RustServer,
         RustClient,
