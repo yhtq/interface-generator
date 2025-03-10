@@ -21,7 +21,6 @@ import Prettyprinter (pretty)
 
 xStarPath :: FilePath
 xStarPath :: FilePath = "/home/yhtq/学习/x-star"
--- rpcClientPath = "/home/yhtq/学习/x-star/lcf_server/hol-rpc/src/interface_client.rs"
 rpcClientPath :: FilePath
 rpcClientPath = xStarPath </> "lcf_server/hol-rpc/src/interface_client.rs"
 rpcServerPath :: FilePath

@@ -16,10 +16,17 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - uses: actions/setup-haskell@v1
-      with:
-        ghc-version: '9.8.2'
-        cabal-version: '3.12.1.0'
+    - run: |
+        export BOOTSTRAP_HASKELL_NONINTERACTIVE=1
+        export BOOTSTRAP_HASKELL_GHC_VERSION=9.8.2
+        export BOOTSTRAP_HASKELL_CABAL_VERSION=3.12.1.0
+        export BOOTSTRAP_HASKELL_INSTALL_HLS=0
+        export BOOTSTRAP_HASKELL_INSTALL_NO_STACK=1
+        curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
+    # - uses: actions/setup-haskell@v1
+    #   with:
+    #     ghc-version: '9.8.2'
+    #     cabal-version: '3.12.1.0'
 
     - name: Cache
       uses: actions/cache@v3
