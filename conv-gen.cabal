@@ -76,7 +76,9 @@ executable conv-gen
         containers,
         filepath,
         regex-compat,
-        raw-strings-qq
+        raw-strings-qq,
+        aeson,
+        yaml
     other-modules:
         RustServer,
         RustClient,

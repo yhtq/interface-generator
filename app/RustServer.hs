@@ -63,7 +63,7 @@ returnTypeR cr =
     let returnsList = map typeToTypeKey returns in
     case returns of
         [] -> "Result<()>"
-        [t] -> "Result<" <> concatComma returnsList <> ">"
+        [_] -> "Result<" <> concatComma returnsList <> ">"
         _ -> "Result<" <> parens (concatComma returnsList) <> ">"
 
 loadDynFunctionR :: ConversionRule -> D

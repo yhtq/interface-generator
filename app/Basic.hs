@@ -17,15 +17,37 @@ module Basic (
   cDocShort
 ) where
 import Data.Text (Text)
+import qualified Data.Text as T 
 import Prettyprinter (Doc, Pretty (pretty), concatWith, comma, (<+>), parens, semi)
+import Data.Yaml (FromJSON(..), (.:), (.:?), Parser, Value)
+import Data.Aeson.Types (explicitParseField, explicitParseFieldMaybe)
+import qualified Data.Yaml as Y
+
 
 
 type D = Doc Text
+
+-- newtype MyD = MyD { unMyD :: D }
+
+-- instance FromJSON MyD where
+--     parseJSON v = do
+--       text :: Text <- parseJSON v
+--       return $ MyD (pretty text) 
 data ArgsType = TheoremArg
     | TermArg
     | StringArg
     | ConversionArg
   deriving (Show, Eq, Ord)
+
+instance FromJSON ArgsType where
+    parseJSON (Y.String v) = do
+        case v of
+            "Theorem" -> return TheoremArg
+            "Term" -> return TermArg
+            "String" -> return StringArg
+            "Conversion" -> return ConversionArg
+            _ -> fail "Invalid ArgsType"
+    parseJSON _ = fail "Invalid ArgsType"
 data ReturnType = TheoremReturn
     | TermReturn
     | String
@@ -34,6 +56,20 @@ data ReturnType = TheoremReturn
     | Bool
     | Conversion
   deriving (Show, Eq, Ord)
+
+instance FromJSON ReturnType where
+    parseJSON (Y.String v) = do
+        case v of
+            "Theorem" -> return TheoremReturn
+            "Term" -> return TermReturn
+            "String" -> return String
+            "Type" -> return Type
+            -- "Void" -> return Void
+            "Bool" -> return Bool
+            "Conversion" -> return Conversion
+            _ -> fail "Invalid ReturnType"
+    parseJSON _ = fail "Invalid ReturnType"
+
 returnTypeUniv :: [ReturnType]
 returnTypeUniv = [TheoremReturn, TermReturn, String, Type, Bool]
 data ConversionRule = ConversionRule {
@@ -44,6 +80,26 @@ data ConversionRule = ConversionRule {
   args :: [ArgsType],
   returnType :: [ReturnType]
 }
+
+parseDs :: Value -> Parser [D]
+parseDs (Y.String v) = return $ map pretty $ T.lines v
+parseDs _ = fail "Invalid D"
+
+-- doc :: ConversionRule -> [D]
+-- doc a = map unMyD (docInternal a)
+
+-- docShort :: ConversionRule -> Maybe [D]
+-- docShort a = fmap (map unMyD) (docShortInternal a)
+instance FromJSON ConversionRule where
+    parseJSON (Y.Object v) = ConversionRule
+        <$> v .: "name"
+        <*> v .:? "nameOCaml"
+        <*> explicitParseField parseDs v "doc"
+        <*> explicitParseFieldMaybe parseDs v "docShort"
+        <*> v .: "args"
+        <*> v .: "returnType"
+    parseJSON _ = fail "Invalid ConversionRule"
+
 argTypeToName :: ArgsType -> D
 argTypeToName x = case x of
     TheoremArg -> "th"

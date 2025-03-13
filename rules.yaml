@@ -1,0 +1,76 @@
+xStarPath: "/home/yhtq/学习/x-star"
+rules:
+  - 
+    name: gen_all
+    nameOcaml: GEN_ALL  # Optional, use `name` as default
+    doc: |
+          SYNOPSIS
+              Generalizes the conclusion of a theorem over its own free variables.
+
+          DESCRIPTION
+              When applied to a theorem A |- t, the inference rule GEN_ALL returns the theorem A |- !x1...xn. t, where the xi are all the variables, if any, which are free in t but not in the assumptions.
+
+                      A |- t
+                ------------------  GEN_ALL
+                  A |- !x1...xn. t
+
+          FAILURE CONDITIONS
+              Never fails.
+
+          EXAMPLE
+
+                # let th = ARITH_RULE `x < y ==> 2 * x + y + 1 < 3 * y`;;
+                val th : thm = |- x < y ==> 2 * x + y + 1 < 3 * y
+
+                # GEN_ALL th;;
+                val it : thm = |- !x y. x < y ==> 2 * x + y + 1 < 3 * y
+
+    docShort: "Generalizes the conclusion of a theorem over its own free variables. " # Optional, use `doc` as default
+    args: [Theorem] # possible field: Theorem, Term, String, Conversion
+    returnType: [Theorem] # possible field: Theorem, Term, String, Type, Bool, Conversion; possibly empty
+  -
+    name: integer_rule
+    nameOcaml: INTEGER_RULE 
+    doc: |
+          SYNOPSIS
+              Automatically prove elementary divisibility property over the integers.
+
+          DESCRIPTION
+              INTEGER_RULE is a partly heuristic rule that can often automatically prove elementary ``divisibility'' properties of the integers. The precise subset that is dealt with is difficult to describe rigorously, but many universally quantified combinations of divides, coprime, gcd and congruences (x == y) (mod n) can be proved automatically, as well as some existentially quantified goals. The examples below may give a feel for what can be done.
+
+          FAILURE CONDITIONS
+              Fails if the goal is not accessible to the methods used.
+
+          EXAMPLE
+              All sorts of elementary Boolean combinations of divisibility and congruence properties can be solved, e.g.
+
+                # INTEGER_RULE
+                  `!x y n:int. (x == y) (mod n) ==> (n divides x <=> n divides y)`;;
+                ...
+                val it : thm = |- !x y n. (x == y) (mod n) ==> (n divides x <=> n divides y)
+
+                # INTEGER_RULE
+                  `!a b d:int. d divides gcd(a,b) <=> d divides a /\ d divides b`;;
+                ...
+                val it : thm =
+                |- !a b d. d divides gcd (a,b) <=> d divides a /\ d divides b
+
+              including some less obvious ones:
+
+                # INTEGER_RULE
+                  `!x y. coprime(x * y,x pow 2 + y pow 2) <=> coprime(x,y)`;;
+                ...
+                val it : thm = |- !x y. coprime (x * y,x pow 2 + y pow 2) <=> coprime (x,y)
+
+              A limited class of existential goals is solvable too, e.g. a classic sufficient condition for a linear congruence to have a solution:
+
+                # INTEGER_RULE `!a b n:int. coprime(a,n) ==> ?x. (a * x == b) (mod n)`;;
+                ...
+                val it : thm = |- !a b n. coprime (a,n) ==> (?x. (a * x == b) (mod n))
+    docShort: "Automatically prove elementary divisibility property over the integers."
+    args: [Term]
+    returnType: [Theorem]
+
+
+
+    
